@@ -5,7 +5,7 @@ import discord4j.common.util.Snowflake;
 import static org.example.MessageProcessor.getCharacterManager;
 
 class Relocator{
-    public static void takeOff(Character character, String itemName) throws InventoryFullException {
+    public static void takeOff(Character character, String itemName) throws InventoryFullException, NoSuchItemInEquipmentException {
         Item item = character.getEquipment().get(itemName);
         if (item.isEquipment()) {
             character.getInventory().add(item);
@@ -13,7 +13,7 @@ class Relocator{
         }
     }
 
-    public static void equip(Character character, String itemName) throws NoSuchItemException, NotWearableItemException, InventoryFullException {
+    public static void equip(Character character, String itemName) throws NotWearableItemException, InventoryFullException, NoSuchItemInInventoryException {
         Item itemOn = character.getInventory().get(itemName);
         Item itemOff = character.getEquipment().get(itemOn.getWearable());
 
@@ -22,18 +22,18 @@ class Relocator{
         character.getInventory().add(itemOff);
     }
 
-    public static void drop(Character character, String itemName) throws NoSuchItemException {
+    public static void drop(Character character, String itemName) throws NoSuchItemInInventoryException {
         character.getInventory().remove(itemName);
     }
 
-    public static int sell(Character character, String itemName) throws NoSuchItemException {
+    public static int sell(Character character, String itemName) throws NoSuchItemInInventoryException {
         Item itemToSell = character.getInventory().get(itemName);
         character.getInventory().remove(itemName);
         character.getInventory().addMoney(itemToSell.getValue());
         return itemToSell.getValue();
     }
 
-    public static void give(Character character, Snowflake receiver, String itemName) throws NoSuchItemException, NoSuchCharacterException, InventoryFullException {
+    public static void give(Character character, Snowflake receiver, String itemName) throws NoSuchCharacterException, InventoryFullException, NoSuchItemInInventoryException {
         Item item = character.getInventory().get(itemName);
         getCharacterManager().getCharacterById(receiver).getInventory().add(item);
         character.getInventory().removeItem(item);

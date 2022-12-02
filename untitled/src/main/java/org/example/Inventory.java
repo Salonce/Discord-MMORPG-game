@@ -5,12 +5,22 @@ import java.util.stream.Collectors;
 
 
 public class Inventory {
-    public static int MAX_ITEM_NUMBER = 12;
-    public static int getMaxItemNumber(){ return MAX_ITEM_NUMBER;}
+    public static int DEFAULT_MAX_CAPACITY = 12;
+
+    public int getMaxCapacity() {
+        return max_capacity;
+    }
+    public void setMaxCapacity(int max_capacity) {
+        this.max_capacity = max_capacity;
+    }
+
+    private int max_capacity;
+
 
     public Inventory(){
         itemList = new ArrayList<>();
         this.money = 0;
+        this.max_capacity = DEFAULT_MAX_CAPACITY;
     }
 
     private ArrayList<Item> itemList;
@@ -35,7 +45,7 @@ public class Inventory {
     }
 
     public boolean isFreeSpace(){
-        if (itemList.size() < MAX_ITEM_NUMBER)
+        if (itemList.size() < max_capacity)
             return true;
         else return false;
     }
@@ -44,7 +54,7 @@ public class Inventory {
     public boolean add(Item item) throws InventoryFullException {
         if (item.isEquipment() == true) {
             int itemsnumber = itemList.size();
-            if (itemsnumber < MAX_ITEM_NUMBER) {
+            if (itemsnumber < max_capacity) {
                 itemList.add(item);
                 return true;
             } else {
@@ -76,16 +86,16 @@ public class Inventory {
         return number;
     }
 
-    public Item get(String name) throws NoSuchItemException {
+    public Item get(String name) throws NoSuchItemInInventoryException {
         try {
             return itemList.stream().filter(item -> item.getName().equalsIgnoreCase(name)).findAny().get();
         } catch (NoSuchElementException e){
-            throw new NoSuchItemException();
+            throw new NoSuchItemInInventoryException();
         }
     }
     public int getItemsWeight(){return itemList.stream().map(Item::getWeight).collect(Collectors.summingInt(Integer::intValue));}
     public int getItemsValue(){return itemList.stream().map(Item::getValue).collect(Collectors.summingInt(Integer::intValue));}
-    public void remove(String name) throws NoSuchItemException {itemList.remove(get(name));}
+    public void remove(String name) throws NoSuchItemInInventoryException {itemList.remove(get(name));}
     public void removeItem(Item item){
         itemList.remove(item);
     }
@@ -100,8 +110,6 @@ public class Inventory {
     }
     public void swap(int a, int b) throws IndexOutOfBoundsException { Collections.swap(itemList, a, b);}
 }
-
-
 
 
         /*for(int i = 0; i < itemList.size(); i++){

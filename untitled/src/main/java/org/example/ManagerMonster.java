@@ -10,14 +10,14 @@ class ManagerMonster {
 
     public static final Monster GABRIELA = new Monster
             .MonsterBuilder("Gabriela", 100, 2, 4,4, 3)
-            .addLoot(ManagerItem.GABRIELAS_TONGUE, 40)
-            .addLoot(ManagerItem.GABRIELAS_NAIL, 50)
+            .addLoot(ManagerItem.GABRIELA_TONGUE, 40)
+            .addLoot(ManagerItem.GABRIELA_NAIL, 50)
             .addDescription("Wild brazilian woman. Her sharp nails can cut right through your skin.")
             .build();
 
     public static final Monster FINGERHOOD = new Monster
             .MonsterBuilder("Fingerhood",100, 1, 2,1, 1)
-            .addLoot(ManagerItem.FINGERHOODS_STORY, 100)
+            .addLoot(ManagerItem.FINGERHOOD_STORY, 100)
             .addDescription("Talking admin. Always has a story to tell.")
             .build();
 
@@ -46,7 +46,7 @@ class ManagerMonster {
     public static final Monster BEAR = new Monster
             .MonsterBuilder("Bear", 200, 8, 13, 25, 5)
             .addLoot(ManagerItem.BEAR_MEAT, 70)
-            .addLoot(ManagerItem.BEAR_SKIN, 30)
+            .addLoot(ManagerItem.BEAR_SKIN, 70)
             .addDescription("A wild mammal with a large body and deadly claws.")
             .build();
 
@@ -55,30 +55,27 @@ class ManagerMonster {
     public static final Monster DOLPHIN = new Monster.MonsterBuilder("Dolphin", 10, 1, 2,1, 1).addDescription("Swimmer.").build();
 
     public static final Monster CHEST = new Monster.MonsterBuilder("Chest", 0, 0, 0,0, 0).addDescription("Receptacle with treasuries.")
-            .addLoot(ManagerItem.STEEL_SWORD, 60)
+            .addLoot(ManagerItem.STEEL_TROUSERS, 20)
+            .addLoot(ManagerItem.STEEL_ARMOR, 20)
             .addLoot(ManagerItem.STEEL_HELMET, 20)
-            .addLoot(ManagerItem.DOLPHIN_SHIELD, 60)
-            .addLoot(ManagerItem.STEEL_SHIELD, 60)
-            .addLoot(ManagerItem.DOLPHIN_FIN, 25)
-            .addLoot(ManagerItem.SHEEP_WOOL, 25)
+            .addLoot(ManagerItem.STEEL_BOOTS, 20)
+            .addLoot(ManagerItem.STEEL_GLOVES, 20)
+            .addLoot(ManagerItem.STEEL_SWORD, 20)
+            .addLoot(ManagerItem.STEEL_SHIELD, 20)
             .build();
 
     public static final Monster CHICK = new Monster.MonsterBuilder("Chick", 20, 1, 3,1, 4).addDescription("A small chicken that came right out of an egg.")
-            .addLoot(ManagerItem.STEEL_SWORD, 10)
             .addLoot(ManagerItem.FEATHER, 80)
             .build();
 
     public static final Monster SMALL_ROOSTER = new Monster.MonsterBuilder("Small rooster", 30, 1, 5,1, 6).addDescription("Small cock, a chicken defender.")
-            .addLoot(ManagerItem.STEEL_SWORD, 10)
             .addLoot(ManagerItem.FEATHER, 80)
             .build();
 
     public static final Monster EGG_MONSTER = new Monster.MonsterBuilder("Eggster",40, 2, 5, 2,7).addDescription("Strange creature made of eggs. It smells badly.")
-            .addLoot(ManagerItem.STEEL_SWORD, 10)
             .build();
 
     public static final Monster CHICK_LORD = new Monster.MonsterBuilder("Chick lord",50, 3, 5,3, 7).addDescription("Lord among chicks. Has a sharp yellow beak.")
-            .addLoot(ManagerItem.STEEL_SWORD, 10)
             .addLoot(ManagerItem.FEATHER, 80)
             .build();
     /*

@@ -18,8 +18,14 @@ class InventoryFullException extends Exception{
     };
 }
 
-class NoSuchItemException extends Exception{
-    public NoSuchItemException(){
+class NoSuchItemInInventoryException extends Exception{
+    public NoSuchItemInInventoryException(){
+        super();
+    }
+}
+
+class NoSuchItemInEquipmentException extends Exception{
+    public NoSuchItemInEquipmentException(){
         super();
     }
 }

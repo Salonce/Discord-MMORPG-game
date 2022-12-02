@@ -23,8 +23,6 @@ abstract class MessageProcessor{
         }
         catch(NoSuchElementException noSuchElementException){
            ///
-        } catch (NoSuchCharacterException noSuchCharacterException) {
-            MessageProcessor.character = null;
         }
     }
 
@@ -38,8 +36,9 @@ abstract class MessageProcessor{
     private static Snowflake id;
     protected static Snowflake getId(){return id;}
 
+    //changed
     private static Character character;
-    protected static Character getCharacter(){return character;}
+    protected static Character getCharacter(){return characterManager.getCharacterById(id);}
 
     private static CharacterManager characterManager;
     protected static CharacterManager getCharacterManager(){return characterManager;}
@@ -127,11 +126,15 @@ class CallGive extends MessageProcessor{
     public void process(){
         try{
             String[] content = getContent().split(" ", 3);
-            if (content[0].equals(".give") && characterCheck()){
+            if (content[0].equals(".give")){
+                getCharacterManager().createCharAndPutInDb(getId());
+
                 String itemName = content[2];
                 Snowflake secondId = Snowflake.of(content[1]);
 
                 Relocator.give(getCharacter(), secondId, itemName);
+                Model.updateUserInventory(getId(), getCharacter());
+                Model.updateUserInventory(secondId, getCharacterManager().getCharacterById(secondId));
                 sendMessage(getUserName() + " gives " + itemName + " to " + getUsernameBySnowflake(secondId));
             }
         } catch (NoSuchCharacterException ex) {
@@ -139,31 +142,13 @@ class CallGive extends MessageProcessor{
         } catch (NumberFormatException e){
             sendMessage("Wrong ID");
         } catch (InventoryFullException e) {
-            sendMessage( "Sorry! Can not do! Inventory of receiver is full.");
+            sendMessage( "Inventory of that person is currently full.");
         } catch (NullPointerException e){
-            sendMessage("Sorry! Something went wrong with receiver's name");
-        } catch (NoSuchItemException e){
-            sendMessage("Sorry! You don't have that item!");
+            sendMessage("Something went wrong with receiver's name");
+        } catch (NoSuchItemInInventoryException e) {
+            sendMessage("You don't have that item in your inventory!");
         } catch (Exception e){
             sendMessage("Unknown exception");
-        }
-    }
-}
-
-
-class CallCharTester extends MessageProcessor{
-    public void process(){
-        try {
-            if (getContent().equals(".tester") && characterNegativeCheck()){
-                 getCharacterManager().createNewCharacter(getId());
-                 getCharacterManager().getCharacterById(getId()).getInventory().add(ManagerItem.STEEL_SHIELD);
-                 getCharacterManager().getCharacterById(getId()).getInventory().add(ManagerItem.STEEL_ARMOR);
-                 getCharacterManager().getCharacterById(getId()).getInventory().add(ManagerItem.STEEL_SWORD);
-
-
-                 sendMessage("Character created!");
-            }
-        } catch(Exception e){
         }
     }
 }
@@ -172,12 +157,7 @@ class CallHelp extends MessageProcessor{
     private String getHelp(){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
-                .append("\n\n**Character creation:**")
-                .append("\n.tester")
-                .append("\n.create")
-
                 .append("\n\n**General:**")
-                .append("\n.info")
                 .append("\n.ap")
                 .append("\n.help")
                 .append("\n.stats")
@@ -191,6 +171,11 @@ class CallHelp extends MessageProcessor{
                 .append("\n.drop *itemname*")
                 .append("\n.give *userID* *itemname*")
 
+                .append("\n\n**Inventory sorting:**")
+                .append("\n.sortval")
+                .append("\n.sortname")
+                .append("\n.swap num1 num2 - swaps item places")
+
                 .append("\n\n**Dungeons:**")
                 .append("\n.cave")
                 .append("\n.server")
@@ -200,18 +185,20 @@ class CallHelp extends MessageProcessor{
     }
     public void process(){
         if (getContent().equals(".help")){
+            getCharacterManager().createCharAndPutInDb(getId());
             sendPlainMessage(getHelp());
         }
     }
 }
-
 class CallCharInfo extends MessageProcessor{
     public void process(){
         if (getContent().equals(".stats") && characterCheck()){
             EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.BLUE)
-                .addField("Stats", ":hearts: " + getCharacter().getHealth().get() + "/" + getCharacter().getHealth().getMax()
-                        + "\n:hiking_boot: " + getCharacter().getActionPoints().getCurrentAP() + "/" + ActionPoints.MAX_AP
+                .addField("Stats", ":hearts: " + getCharacter().getHealth().get() + "/" + getCharacter().getHealth().getMax() + "  :arrow_heading_up: " + getCharacter().getHealth().getRegen() + "p / 1s"
+
+                        + "\n:hiking_boot: " + getCharacter().getActionPoints().getCurrentAP() + "/" + ActionPoints.MAX_AP + "  :arrow_heading_up: 1p / " + getCharacter().getActionPoints().AP_RECOVERY_TIME + "s"
+
                         //+ "\n:dagger: " + getCharacter().getEquipment().getTotalMinAttack() + "-" + getCharacter().getEquipment().getTotalMaxAttack()
                         //+ "\n:shield: " + getCharacter().getEquipment().getTotalDefence()
                         //+ "\n:athletic_shoe: " + getCharacter().getStats().getSpeed()
@@ -223,24 +210,12 @@ class CallCharInfo extends MessageProcessor{
     }
 }
 
-class CallCreateCharacter extends MessageProcessor {
-    public void process() {
-        try {
-            if (getContent().equals(".create") && characterNegativeCheck()) {
-                getCharacterManager().createNewCharacter(getId());
-                Model.insertOneId(getId());
-                sendMessage("Character created!");
-            }
-        } catch (Exception e) {
-        }
-    }
-}
-
 class CallTester extends MessageProcessor {
     public void process() {
         try {
             if (getContent().equals(".test")) {
-                Model.insertOneId(getId());
+                //if character not created - create it - add it to the hashlist
+                getCharacterManager().createCharAndPutInDb(getId());
                 sendMessage("Tester applied!");
             }
         } catch (Exception e) {
@@ -254,13 +229,16 @@ class CallEquip extends MessageProcessor{
     public void process(){
         try{
             String[] content = getContent().split(" ", 2);
-            if (content[0].equals(".equip") && characterCheck()){
+            if (content[0].equals(".equip")){
+                getCharacterManager().createCharAndPutInDb(getId());
 
                 Relocator.equip(getCharacter(), content[1]);
+                Model.updateUserInventory(getId(), getCharacter());
+                Model.updateUserEquipment(getId(), getCharacter());
                 sendMessage(getUserName() + " equipped " + content[1]);
             }
-        } catch (NoSuchElementException e){
-            sendMessage("You don't have this item in your inventory!");
+        } catch (NoSuchItemInInventoryException e) {
+            sendMessage("You don't have that item in your inventory!");
         }
         catch (Exception ignored){
         }
@@ -271,15 +249,18 @@ class CallUnequip extends MessageProcessor{
     public void process(){
         try{
             String[] content = getContent().split(" ", 2);
-            if (content[0].equals(".unequip") && characterCheck()) {
+            if (content[0].equals(".unequip")) {
+                getCharacterManager().createCharAndPutInDb(getId());
 
                 Relocator.takeOff(getCharacter(), content[1]);
+                Model.updateUserInventory(getId(), getCharacter());
+                Model.updateUserEquipment(getId(), getCharacter());
                 sendMessage(getUserName() + " unequipped " + content[1]);
             }
         }
         catch (IndexOutOfBoundsException e){
-        } catch (NoSuchElementException e){
-            sendMessage("You don't wear that item!");
+        } catch (NoSuchItemInEquipmentException e) {
+            sendMessage("You don't have that item in your equipment!");
         } catch (Exception e){}
     }
 }
@@ -288,14 +269,16 @@ class CallDrop extends MessageProcessor{
     public void process(){
         try{
             String[] content = getContent().split(" ", 2);
-            if (content[0].equals(".drop") && characterCheck()){
+            if (content[0].equals(".drop")){
+                getCharacterManager().createCharAndPutInDb(getId());
 
                 Relocator.drop(getCharacter(), content[1]);
+                Model.updateUserInventory(getId(), getCharacter());
                 sendMessage(getUserName() + " dropped " + content[1]);
             }
-        } catch (NoSuchElementException e){
+        } catch (NoSuchItemInInventoryException e) {
             sendMessage("You don't have that item in your inventory!");
-        } catch (Exception e){
+        }  catch (Exception e){
         }
     }
 }
@@ -304,13 +287,15 @@ class CallSell extends MessageProcessor{
     public void process(){
         try{
             String[] content = getContent().split(" ", 2);
-            if (content[0].equalsIgnoreCase(".sell") && characterCheck()){
+            if (content[0].equalsIgnoreCase(".sell")){
+                getCharacterManager().createCharAndPutInDb(getId());
 
                 int cash = Relocator.sell(getCharacter(), content[1]);
+                Model.updateUserInventory(getId(), getCharacter());
                 sendMessage(getUserName() + " sold " + content[1] + " for " + cash);
             }
-        } catch (NoSuchElementException e){
-            sendMessage("You don't have this item!");
+        } catch (NoSuchItemInInventoryException e) {
+            sendMessage("You don't have that item in your inventory!");
         }
         catch (Exception e){}
     }
@@ -329,7 +314,8 @@ class CallCooldowns extends MessageProcessor{
     }
 
     public void process(){
-        if (getContent().equals(".ap") && characterCheck()){
+        if (getContent().equals(".ap")){
+            getCharacterManager().createCharAndPutInDb(getId());
             EmbedCreateSpec embed = EmbedCreateSpec.builder()
                     .color(Color.BLUE)
                     .author(getUserName() + " - action points", null, getUserAvatarUrl())
@@ -343,7 +329,8 @@ class CallCooldowns extends MessageProcessor{
 
 class CallShop extends MessageProcessor{
     public void process(){
-        if (getContent().equals(".shop") && characterCheck()){
+        if (getContent().equals(".shop")){
+            getCharacterManager().createCharAndPutInDb(getId());
             sendMessage(getShop().itemsAvailable());
         }
     }
@@ -353,10 +340,11 @@ class CallI extends MessageProcessor{
     final static int INV_MAX_CHAR = 15;
 
     public void process(){
-        if (getContent().equals(".i") && characterCheck()){
+        if (getContent().equals(".i")){
+            getCharacterManager().createCharAndPutInDb(getId());
             EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
                     .color(Color.BROWN)
-                    .author(getUserName() + " : Inventory (" + getCharacter().getInventory().getSize() + "/" + Inventory.MAX_ITEM_NUMBER + ")", null, getUserAvatarUrl())
+                    .author(getUserName() + " : Inventory (" + getCharacter().getInventory().getSize() + "/" + Inventory.DEFAULT_MAX_CAPACITY + ")", null, getUserAvatarUrl())
                     //.addField("Total"
                     //        , ":coin: " + getCharacter().getInventory().getMoney()
                     //                + " :scales: " + getCharacter().getInventory().getItemsWeight(), false)
@@ -392,7 +380,8 @@ class CallI extends MessageProcessor{
 
 class CallEquipmentInfo extends MessageProcessor{
     public void process(){
-        if (getContent().equals(".eq") && characterCheck()){
+        if (getContent().equals(".eq")){
+            getCharacterManager().createCharAndPutInDb(getId());
             EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.BLUE)
                 .addField(addSpaces("Head", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHeadEquipment()), true)
@@ -406,7 +395,6 @@ class CallEquipmentInfo extends MessageProcessor{
                         + "\n:dagger: " + getCharacter().getEquipment().getTotalMinAttack() + "-" + getCharacter().getEquipment().getTotalMaxAttack()
                         + "\n:scales: " + getCharacter().getEquipment().getTotalWeight(), true)
                 .author(getUserName() + " - Equipment", null, getUserAvatarUrl())
-                .timestamp(Instant.now())
                 .build();
             sendMessage(embed);
         }
@@ -414,15 +402,19 @@ class CallEquipmentInfo extends MessageProcessor{
     final static int EQ_MAX_CHAR = 13;
     private String getEmbedStats(Item item){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(item.getName());
-        //stringBuilder.append("\n:coin: " + item.getValue());
-        stringBuilder.append("\n:scales: " + item.getWeight());
-        if (item.hasAttack()){
-            stringBuilder.append("\n:dagger: " + item.getMinAttack() + "-" + item.getMaxAttack());
+        if (!item.isEmptyEq) {
+            stringBuilder.append(item.getName());
+            //stringBuilder.append("\n:coin: " + item.getValue());
+            stringBuilder.append("\n:scales: " + item.getWeight());
+            if (item.hasAttack()) {
+                stringBuilder.append("\n:dagger: " + item.getMinAttack() + "-" + item.getMaxAttack());
+            }
+            if (item.hasDefense()) {
+                stringBuilder.append("\n:shield: " + item.getDefence());
+            }
         }
-        if (item.hasDefense()){
-            stringBuilder.append("\n:shield: " + item.getDefence());
-        }
+        else
+            stringBuilder.append("-");
         return stringBuilder.toString();
     }
 }
@@ -433,7 +425,8 @@ class CallRat extends MessageProcessor{
     public void process(){
         Dungeon dungeon = getDungeon(getContent());
         try {
-            if (dungeon != null && characterCheck()) {
+            if (dungeon != null) {
+                getCharacterManager().createCharAndPutInDb(getId());
                 getCharacter().getActionPoints().addCooldown(AP_FOR_QUEST);
                 Monster newMonster = dungeon.getMonster();
                 Fight fight = new Fight(getCharacter(), newMonster);
@@ -456,10 +449,11 @@ class CallRat extends MessageProcessor{
                             + "\n:athletic_shoe: " + newMonster.getCombatStrength().getSpeed()
                             , true)
                     .addField(":clipboard:", printFightResult(fight, newMonster), false);
-                Model.updateOneHealth(getId(), getCharacter());
+                Model.updateUserHealth(getId(), getCharacter());
                 if (fight.getResults().getResultA().isVictory()) {
                     int lootNumber = getCharacter().getInventory().addItems(randomLoot);
                     embedBuilder.addField(":palm_down_hand:", printLoot(randomLoot, lootNumber), false);
+                    Model.updateUserInventory(getId(), getCharacter());
                 }
 
                 sendMessage(embedBuilder.build());
@@ -529,8 +523,10 @@ class CallRat extends MessageProcessor{
 ////NEW SORTING
 class CallSortByName extends MessageProcessor{
     public void process(){
-        if (getContent().equals(".sortname") && characterCheck()){
+        if (getContent().equals(".sortname")){
+            getCharacterManager().createCharAndPutInDb(getId());
             getCharacter().getInventory().sortByName();
+            Model.updateUserInventory(getId(), getCharacter());
             sendMessage("Inventory sorted by name.");
         }
     }
@@ -538,8 +534,10 @@ class CallSortByName extends MessageProcessor{
 
 class CallSortByValue extends MessageProcessor{
     public void process(){
-        if (getContent().equals(".sortval") && characterCheck()){
+        if (getContent().equals(".sortval")){
+            getCharacterManager().createCharAndPutInDb(getId());
             getCharacter().getInventory().sortByValueReversed();
+            Model.updateUserInventory(getId(), getCharacter());
             sendMessage("Inventory sorted by value.");
         }
     }
@@ -547,7 +545,8 @@ class CallSortByValue extends MessageProcessor{
 
 class CallHospital extends MessageProcessor{
     public void process(){
-        if (getContent().equals(".hospital") && characterCheck()){
+        if (getContent().equals(".hospital")){
+            getCharacterManager().createCharAndPutInDb(getId());
             getCharacter().getHealth().set(getCharacter().getHealth().getMax());
             sendMessage("You are healed.");
         }
@@ -558,10 +557,12 @@ class CallSwap extends MessageProcessor{
     public void process(){
         try{
             String[] content = getContent().split(" ", 3);
-            if (content[0].equalsIgnoreCase(".swap") && characterCheck()){
+            if (content[0].equalsIgnoreCase(".swap")){
+                getCharacterManager().createCharAndPutInDb(getId());
                 int one = Integer.parseInt(content[1]);
                 int two = Integer.parseInt(content[2]);
                 getCharacter().getInventory().swap(one-1, two-1);
+                Model.updateUserInventory(getId(), getCharacter());
                 sendMessage("Inventory: *" + getCharacter().getInventory().getItemList().get(two-1).getName() + "* and *" + getCharacter().getInventory().getItemList().get(one-1).getName() + "* have been swapped.");
 
             }
@@ -584,8 +585,6 @@ class AnswerManager {
 
     public AnswerManager() {
         messageProcessorList.add(new CallHelp());
-        messageProcessorList.add(new CallCreateCharacter());
-        messageProcessorList.add(new CallCharTester());
         messageProcessorList.add(new CallCooldowns());
         messageProcessorList.add(new CallShop());
         messageProcessorList.add(new CallI());

@@ -122,12 +122,10 @@ class Health{
         return this.health;
     }
     public void set(int health) {
-        System.out.println("clear all instants");
         cleanAllInstants();
         this.health = health;
         maybeSetNewRegenTime();
         clearIfFullHp();
-        System.out.println("after clear all instants");
     }
 
     public void setMax(int maxHealth) {
@@ -190,18 +188,24 @@ class CharacterManager {
         return usersCharacters;
     }
 
-    public CharacterManager(String dbLoad) {
-        usersCharacters = new HashMap<>();
-    }
-    public void createNewCharacter(Snowflake id){
+    private void createCharacter(Snowflake id){
         usersCharacters.put(id, new Character());
     }
 
-    public Character getCharacterById(Snowflake id) throws NoSuchCharacterException {
-        if (usersCharacters.get(id) != null){
-            return usersCharacters.get(id);
+    public void createCharAndPutInDb(Snowflake id){
+        if (!usersCharacters.containsKey(id)){
+            createCharacter(id);
+            Model.addAllToUserDb(id);
         }
-        else throw new NoSuchCharacterException();
+    }
+
+    public CharacterManager(String dbLoad) {
+        usersCharacters = new HashMap<>();
+    }
+
+
+    public Character getCharacterById(Snowflake id) {
+        return usersCharacters.get(id);
     }
 }
 

@@ -49,6 +49,8 @@ abstract class Item{
 
     public Item(String name, int weight, int value){
         this.name = name;
+        ManagerItem.putInHashMap(this);
+
         this.weight = weight;
         this.value = value;
         this.defence = 0;
@@ -97,7 +99,7 @@ abstract class Item{
 
 
     public boolean isEquipment(){
-        return !isEmptyEquipment();
+        return !this.isEmptyEq;
     };
     public boolean hasAttack(){
         return this.hasAttack;
@@ -110,9 +112,6 @@ abstract class Item{
     }
     public boolean isMoney(){
         return this.isMoney;
-    }
-    public boolean isEmptyEquipment(){
-        return false;
     }
 
 }

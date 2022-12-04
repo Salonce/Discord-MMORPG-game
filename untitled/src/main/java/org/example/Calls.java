@@ -158,7 +158,6 @@ class CallHelp extends MessageProcessor{
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
                 .append("\n\n**General:**")
-                .append("\n.ap")
                 .append("\n.help")
                 .append("\n.stats")
                 .append("\n.hospital")
@@ -301,32 +300,6 @@ class CallSell extends MessageProcessor{
     }
 }
 
-class CallCooldowns extends MessageProcessor{
-    final static int AP_MAX_CHAR = 13;
-    private String getField(){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder
-                .append("**Available**: " + getCharacter().getActionPoints().getCurrentAP() + "/" + ActionPoints.MAX_AP + " (next in "  + (getCharacter().getActionPoints().getFirstCD()) + "s)")
-                .append("\n")
-                .append("\n**Regeneration**: 1 per " + getCharacter().getActionPoints().AP_RECOVERY_TIME + "s");
-
-        return stringBuilder.toString();
-    }
-
-    public void process(){
-        if (getContent().equals(".ap")){
-            getCharacterManager().createCharAndPutInDb(getId());
-            EmbedCreateSpec embed = EmbedCreateSpec.builder()
-                    .color(Color.BLUE)
-                    .author(getUserName() + " - action points", null, getUserAvatarUrl())
-                    .addField("\u2800", getField(), false)
-                    .build();
-            sendMessage(embed);
-        }
-    }
-}
-
-
 class CallShop extends MessageProcessor{
     public void process(){
         if (getContent().equals(".shop")){
@@ -340,7 +313,7 @@ class CallI extends MessageProcessor{
     final static int INV_MAX_CHAR = 15;
 
     public void process(){
-        if (getContent().equals(".i")){
+        if (getContent().equals(".inv")){
             getCharacterManager().createCharAndPutInDb(getId());
             EmbedCreateSpec.Builder embedBuilder = EmbedCreateSpec.builder()
                     .color(Color.BROWN)
@@ -436,17 +409,17 @@ class CallRat extends MessageProcessor{
                     .author(getUserName() + " uses " + AP_FOR_QUEST + " action points", null, getUserAvatarUrl())
                     .addField(newMonster.getName(), newMonster.getDescription(), false)
                     .addField(getUserName(),
-                            "\n:hearts: " + getCharacter().getCombatStrength().getHealth()
+                            "\n:hearts: " + getCharacter().getCombatStrength().getHealth() + "/" + getCharacter().getHealth().getMax()
                             + "\n:dagger: " + getCharacter().getCombatStrength().getMinAttack() + "-" + getCharacter().getCombatStrength().getMaxAttack()
                             + "\n:shield: " + getCharacter().getCombatStrength().getDefense()
-                            + "\n:athletic_shoe: " + getCharacter().getCombatStrength().getSpeed()
+                            //+ "\n:hiking_boot: " + getCharacter().getCombatStrength().getSpeed()
                             + "\n\u2800", true)
                     .addField(newMonster.getName(),
 
-                             "\n:hearts: " + newMonster.getCombatStrength().getHealth()
+                             "\n:hearts: " + newMonster.getCombatStrength().getHealth() + "/" + newMonster.getCombatStrength().getHealth()
                             + "\n:dagger: " + newMonster.getCombatStrength().getMinAttack() + "-" + newMonster.getCombatStrength().getMaxAttack()
                             + "\n:shield: " + newMonster.getCombatStrength().getDefense()
-                            + "\n:athletic_shoe: " + newMonster.getCombatStrength().getSpeed()
+                            //+ "\n:hiking_boot: " + newMonster.getCombatStrength().getSpeed()
                             , true)
                     .addField(":clipboard:", printFightResult(fight, newMonster), false);
                 Model.updateUserHealth(getId(), getCharacter());
@@ -470,12 +443,17 @@ class CallRat extends MessageProcessor{
     private String printFightResult(Fight fight, Monster monster){
         StringBuilder stringBuilder = new StringBuilder();
         if (fight.getResults().getResultA().isVictory()){
-            stringBuilder.append(monster.getName() + " dies.");
-            stringBuilder.append("\n" + getUserName() + " has :hearts:" + fight.getResults().getResultA().getHealth() + " left.");
+            stringBuilder.append(monster.getName() + " :skull:");
+            //stringBuilder.append("\n" + getUserName() + " :broken_heart:" + (getCharacter().getCombatStrength().getHealth() - fight.getResults().getResultA().getHealth()));
+            stringBuilder.append("\n" + getUserName() + " :hearts:" + fight.getResults().getResultA().getHealth() + " (:broken_heart:" + (getCharacter().getCombatStrength().getHealth() - fight.getResults().getResultA().getHealth()) + ")");
+            //stringBuilder.append(":hearts:" + fight.getResults().getResultA().getHealth() + " left.");
             }
         else {
-            stringBuilder.append(getUserName() + " dies.");
-            stringBuilder.append("\n" + monster.getName() + " has :hearts:" + fight.getResults().getResultB().getHealth() + " left.");
+            stringBuilder.append(getUserName() + " :skull:");
+            stringBuilder.append("\n" + monster.getName() + " :hearts:" + fight.getResults().getResultB().getHealth() + " left. " + "(:broken_heart:" + (monster.getCombatStrength().getHealth() - fight.getResults().getResultB().getHealth()) + ")");
+
+            //stringBuilder.append(getUserName() + " dies.");
+            //stringBuilder.append("\n" + monster.getName() + " has :hearts:" + fight.getResults().getResultB().getHealth() + " left.");
         }
         getCharacter().getHealth().set(fight.getResults().getResultA().getHealth());
         return stringBuilder.toString();
@@ -585,7 +563,6 @@ class AnswerManager {
 
     public AnswerManager() {
         messageProcessorList.add(new CallHelp());
-        messageProcessorList.add(new CallCooldowns());
         messageProcessorList.add(new CallShop());
         messageProcessorList.add(new CallI());
         messageProcessorList.add(new CallCharInfo());

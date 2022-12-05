@@ -15,30 +15,6 @@ class Character implements Fighter{
         this.stats = new Stats();
     }
 
-    public void loadDatabase(){
-        //setCharacterHashset
-            //forEach - put (ID, newCharacter())
-
-        //class Databaseoperations.
-        //setstats(userId)
-            //userId, related hp vals, speed vals
-            //setHpVal
-            //setSpeedVal
-
-
-        //setstats
-            //load id related hp vals, speed vals
-            //setHpVal
-            //setSpeedVal
-        //seteq
-        //setinv
-        //setAP
-        //setHP
-    }
-
-
-
-
     private Stats stats;
     public Stats getStats(){return stats;}
 

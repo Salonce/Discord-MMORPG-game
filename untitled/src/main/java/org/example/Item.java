@@ -181,14 +181,14 @@ class NoHelmet extends HeadEquipment{
     public NoHelmet(String name, int weight, int value, int defence){
         super(name, weight, value, defence);
         this.isEmptyEq = true;
-        wearable = Wearable.HEAD;
+        this.wearable = Wearable.HEAD;
     }
 }
 final class NoArmor extends TorsoEquipment{
     public NoArmor(String name, int weight, int value, int defence){
         super(name, weight, value, defence);
         this.isEmptyEq = true;
-        wearable = Wearable.TORSO;
+        this.wearable = Wearable.TORSO;
     }
 }
 final class NoTrousers extends LegsEquipment{

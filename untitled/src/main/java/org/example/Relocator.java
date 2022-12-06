@@ -2,13 +2,18 @@ package org.example;
 
 import discord4j.common.util.Snowflake;
 
+import java.util.Optional;
+
 import static org.example.MessageProcessor.getCharacterManager;
 
 class Relocator{
     public static void takeOff(Character character, String itemName) throws InventoryFullException, NoSuchItemInEquipmentException {
-        Item item = character.getEquipment().get(itemName);
-        if (item.isEquipment()) {
-            character.getInventory().add(item);
+        //Optional<Item> item2 = ManagerItem.get(itemName);
+        //if (item2.isPresent() && item2.get().isEquipment())
+
+        Optional<Item> item = character.getEquipment().get(itemName);
+        if (item.isPresent() && item.get().isReal()) {
+            character.getInventory().add(item.get());
             character.getEquipment().remove(itemName);
         }
     }

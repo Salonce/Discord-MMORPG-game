@@ -58,6 +58,7 @@ abstract class Item{
         this.maxAttack = 0;
         this.hasDefense = false;
         this.hasAttack = false;
+        this.isEquipment = false;
         this.isEmptyEq = false;
         this.isMoney = false;
         this.wearable = Wearable.NOTHING;
@@ -71,6 +72,7 @@ abstract class Item{
     protected int maxAttack;
     protected boolean hasDefense;
     protected boolean hasAttack;
+    protected boolean isEquipment;
     protected boolean isEmptyEq;
     protected boolean isMoney;
     protected Wearable wearable;
@@ -97,9 +99,14 @@ abstract class Item{
         else return 0;
     }
 
-
-    public boolean isEquipment(){
+    public boolean isReal(){
         return !this.isEmptyEq;
+    };
+    public boolean isEmptyEq(){
+        return this.isEmptyEq;
+    };
+    public boolean isEquipment(){
+        return this.isEquipment;
     };
     public boolean hasAttack(){
         return this.hasAttack;
@@ -113,16 +120,14 @@ abstract class Item{
     public boolean isMoney(){
         return this.isMoney;
     }
-
 }
-
-
 
 abstract class DefensiveItem extends Item{
     public DefensiveItem(String name, int weight, int value, int defence){
         super(name, weight, value);
         this.defence = defence;
         this.hasDefense = true;
+        this.isEquipment = true;
     }
 }
 
@@ -168,6 +173,7 @@ abstract class OffensiveItem extends Item{
         this.minAttack = minAttack;
         this.maxAttack = maxAttack;
         this.hasAttack = true;
+        this.isEquipment = true;
     }
 }
 

@@ -37,42 +37,23 @@ public class Inventory {
         this.money =+ money;
     }
 
-    //private int maxWeight;
-
-
     public int getSize(){
         return itemList.size();
     }
 
-    public boolean isFreeSpace(){
-        if (itemList.size() < max_capacity)
-            return true;
-        else return false;
+    public boolean freeSpace(){
+        return (itemList.size() < max_capacity) ? true : false;
     }
 
-    //return true if an item was added succesfully
-    public boolean add(Item item) throws InventoryFullException {
-        if (item.isEquipment() == true) {
-            int itemsnumber = itemList.size();
-            if (itemsnumber < max_capacity) {
-                itemList.add(item);
-                return true;
-            } else {
-                throw new InventoryFullException("Inventory is full. Can't pick up the item.");
-            }
-        }
-        else{
-            return false;
-        }
+    public void add(Item item) throws InventoryFullException {
+        if (freeSpace())
+            itemList.add(item);
+        else
+            throw new InventoryFullException("Inventory is full. Can't pick up the item.");
     }
+
     public int addItems(ArrayList<Item> itemsToAdd) throws InventoryFullException {
-        //int numberToAdd = MAX_ITEM_NUMBER - itemList.size();
-        //if (itemsToAdd.size() < numberToAdd){
-        //    numberToAdd = itemsToAdd.size();
-        //}
-
         int number = 0;
-
         Iterator<Item> newItemsIterator= itemsToAdd.iterator();
         try {
             while (newItemsIterator.hasNext()) {
@@ -110,20 +91,3 @@ public class Inventory {
     }
     public void swap(int a, int b) throws IndexOutOfBoundsException { Collections.swap(itemList, a, b);}
 }
-
-
-        /*for(int i = 0; i < itemList.size(); i++){
-            if (itemList.get(i).getName().equalsIgnoreCase(name)){
-                itemList.remove(i);
-                return;
-            }
-        }
-        throw new NoSuchItemException();
-         */
-        /*
-        int weight = 0;
-        for (Item item : itemList){
-            weight += item.getWeight();
-        }
-        return weight;
-         */

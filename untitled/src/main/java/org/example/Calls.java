@@ -118,6 +118,14 @@ abstract class MessageProcessor{
         }
         return stringBuilder.toString();
     }
+
+    protected static String emptySpaces(int number){
+        StringBuilder stringBuilder = new StringBuilder();
+        while(stringBuilder.length() < number){
+            stringBuilder.append("\u2800");
+        }
+        return stringBuilder.toString();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +341,7 @@ class CallI extends MessageProcessor{
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\n:coin: " + item.getValue());
         //stringBuilder.append("\n:scales: " + item.getWeight());
-        stringBuilder.append("\n\u2800");
+        //stringBuilder.append("\n\u2800");
         if (item.hasAttack())
             stringBuilder.append("\n:dagger: " + item.getMinAttack() + "-" + item.getMaxAttack());
         else
@@ -357,16 +365,20 @@ class CallEquipmentInfo extends MessageProcessor{
             getCharacterManager().createCharAndPutInDb(getId());
             EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.BLUE)
-                .addField(addSpaces("Head", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHeadEquipment()), true)
-                .addField(addSpaces("Torso", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getTorsoEquipment()), true)
-                .addField(addSpaces("Legs", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getLegsEquipment()), true)
-                .addField(addSpaces("Feet", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getFeetEquipment()), true)
-                .addField(addSpaces("Hands", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHandsEquipment()), true)
-                .addField(addSpaces("1st hand", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getFirstHandEquipment()), true)
-                .addField(addSpaces("2nd hand", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getSecondHandEquipment()), true)
-                .addField("Total", ":shield: " + getCharacter().getEquipment().getTotalDefence()
-                        + "\n:dagger: " + getCharacter().getEquipment().getTotalMinAttack() + "-" + getCharacter().getEquipment().getTotalMaxAttack()
-                        + "\n:scales: " + getCharacter().getEquipment().getTotalWeight(), true)
+                .addField(emptySpaces(15), emptySpaces(15), true)
+                .addField(emptySpaces(15), emptySpaces(15), true)
+                .addField(emptySpaces(15), emptySpaces(15), true)
+                .addField(addSpaces(":billed_cap:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHeadEquipment()), true)
+                .addField(addSpaces(":shirt:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getTorsoEquipment()), true)
+                .addField(addSpaces(":jeans:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getLegsEquipment()), true)
+                .addField(addSpaces(":boot:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getFeetEquipment()), true)
+                .addField(addSpaces(":gloves:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHandsEquipment()), true)
+                .addField(addSpaces(":leftwards_hand:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getFirstHandEquipment()), true)
+                .addField(addSpaces(":rightwards_hand:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getSecondHandEquipment()), true)
+                .addField(emptySpaces(15), emptySpaces(15), true)
+                //.addField("Total", ":shield: " + getCharacter().getEquipment().getTotalDefence()
+                //        + "\n:dagger: " + getCharacter().getEquipment().getTotalMinAttack() + "-" + getCharacter().getEquipment().getTotalMaxAttack()
+                //        + "\n:scales: " + getCharacter().getEquipment().getTotalWeight(), true)
                 .author(getUserName() + " - Equipment", null, getUserAvatarUrl())
                 .build();
             sendMessage(embed);
@@ -376,7 +388,7 @@ class CallEquipmentInfo extends MessageProcessor{
     private String getEmbedStats(Item item){
         StringBuilder stringBuilder = new StringBuilder();
         if (!item.isEmptyEq) {
-            stringBuilder.append(item.getName());
+            stringBuilder.append("**" + item.getName() + "**");
             //stringBuilder.append("\n:coin: " + item.getValue());
             stringBuilder.append("\n:scales: " + item.getWeight());
             if (item.hasAttack()) {
@@ -388,6 +400,7 @@ class CallEquipmentInfo extends MessageProcessor{
         }
         else
             stringBuilder.append("-");
+        stringBuilder.append("\n" + emptySpaces(5));
         return stringBuilder.toString();
     }
 }

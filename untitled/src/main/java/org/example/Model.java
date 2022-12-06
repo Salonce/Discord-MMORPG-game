@@ -5,6 +5,7 @@ import discord4j.common.util.Snowflake;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class Model {
     private static final String connectionUrl = "jdbc:mysql://localhost:3306/";
@@ -86,9 +87,9 @@ public class Model {
     private static void fillItems(ArrayList<Item> itemArrayList, ResultSet rs) throws SQLException {
         for (int i = 0; i < 15; i++){
             if (rs.getString("i" + i) != null) {
-                Item newItem = ManagerItem.get(rs.getString("i" + i));
-                //if (newItem != null)
-                itemArrayList.add(newItem);
+                Optional<Item> newItem = ManagerItem.get(rs.getString("i" + i));
+                if (newItem.isPresent())
+                    itemArrayList.add(newItem.get());
             }
         }
     }
@@ -97,21 +98,28 @@ public class Model {
         while (rs.next()) {
             ArrayList<Item> itemArrayList = new ArrayList<>();
             long id = rs.getLong("Snowflake");
-            Item head = ManagerItem.get(rs.getString("head"));
-            Item torso = ManagerItem.get(rs.getString("torso"));
-            Item legs = ManagerItem.get(rs.getString("legs"));
-            Item feet = ManagerItem.get(rs.getString("feet"));
-            Item hands = ManagerItem.get(rs.getString("hands"));
-            Item firstHand = ManagerItem.get(rs.getString("firsthand"));
-            Item secondHand = ManagerItem.get(rs.getString("secondhand"));
+            Optional<Item> head = ManagerItem.get(rs.getString("head"));
+            Optional<Item> torso = ManagerItem.get(rs.getString("torso"));
+            Optional<Item> legs = ManagerItem.get(rs.getString("legs"));
+            Optional<Item> feet = ManagerItem.get(rs.getString("feet"));
+            Optional<Item> hands = ManagerItem.get(rs.getString("hands"));
+            Optional<Item> firstHand = ManagerItem.get(rs.getString("firsthand"));
+            Optional<Item> secondHand = ManagerItem.get(rs.getString("secondhand"));
             Character character = characterManager.getCharacterById(Snowflake.of(id));
-            character.getEquipment().equip(head);
-            character.getEquipment().equip(torso);
-            character.getEquipment().equip(legs);
-            character.getEquipment().equip(feet);
-            character.getEquipment().equip(hands);
-            character.getEquipment().equip(firstHand);
-            character.getEquipment().equip(secondHand);
+            if (head.isPresent())
+                character.getEquipment().equip(head.get());
+            if (torso.isPresent())
+                character.getEquipment().equip(torso.get());
+            if (legs.isPresent())
+                character.getEquipment().equip(legs.get());
+            if (feet.isPresent())
+                character.getEquipment().equip(feet.get());
+            if (hands.isPresent())
+                character.getEquipment().equip(hands.get());
+            if (firstHand.isPresent())
+                character.getEquipment().equip(firstHand.get());
+            if (secondHand.isPresent())
+                character.getEquipment().equip(secondHand.get());
         }
     }
 

@@ -1,30 +1,29 @@
 package org.example;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 class ManagerItem {
     //maybe items and they put static names
 
     private static final HashMap<String, Item> itemHashMap = new HashMap<>();
-    public static Item get(String string){
-        if (itemHashMap.get(string) == null)
-            throw new RuntimeException("Incorrect spelling of: " + string);
-        return itemHashMap.get(string);
+    public static Optional<Item> get(String string){
+        return Optional.ofNullable(itemHashMap.get(string));
     }
     public static void putInHashMap(Item item){
         itemHashMap.put(item.getName(), item);
     }
 
 
-    public static Item BEANIE = new Helmet("Beanie", 1, 5, 1);
+    public static final Item BEANIE = new Helmet("Beanie", 1, 5, 1);
 
-    public static Item STEEL_HELMET = new Helmet("Steel helmet", 3, 25, 3);
-    public static Item STEEL_ARMOR = new Armor("Steel armor", 1, 5, 1);
-    public static Item STEEL_TROUSERS = new Trousers("Steel trousers", 10, 35, 7);
-    public static Item STEEL_GLOVES = new Gloves("Steel gloves", 3, 10, 3);
-    public static Item STEEL_BOOTS = new Boots("Steel boots", 4, 25, 3);
-    public static Item STEEL_SHIELD = new Shield("Steel shield", 5, 45, 6);
-    public static Item STEEL_SWORD = new Weapon("Steel sword", 3, 45, 4, 7);
+    public static final Item STEEL_HELMET = new Helmet("Steel helmet", 3, 25, 3);
+    public static final Item STEEL_ARMOR = new Armor("Steel armor", 1, 5, 1);
+    public static final Item STEEL_TROUSERS = new Trousers("Steel trousers", 10, 35, 7);
+    public static final Item STEEL_GLOVES = new Gloves("Steel gloves", 3, 10, 3);
+    public static final Item STEEL_BOOTS = new Boots("Steel boots", 4, 25, 3);
+    public static final Item STEEL_SHIELD = new Shield("Steel shield", 5, 45, 6);
+    public static final Item STEEL_SWORD = new Weapon("Steel sword", 3, 45, 4, 7);
 
     public static Item KNIFE = new Weapon("Knife", 1, 15, 1, 3);
     public static Item GABRIELA_NAIL = new Weapon("Gabriela's nail", 1, 35, 2, 4);

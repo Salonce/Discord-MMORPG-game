@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 class Equipment{
@@ -32,126 +33,94 @@ class Equipment{
     }
 
 
-
-
-
     public void equip(Item item) throws NotWearableItemException {
         if (item != null){
-            if (item.getWearable() == Wearable.HEAD){
+            if (item.getWearable() == Wearable.HEAD)
                 headEquipment = item;
-            }
-            else if (item.getWearable() == Wearable.TORSO){
+            else if (item.getWearable() == Wearable.TORSO)
                 torsoEquipment = item;
-            }
-            else if (item.getWearable() == Wearable.LEGS){
+            else if (item.getWearable() == Wearable.LEGS)
                 legsEquipment = item;
-            }
-            else if (item.getWearable() == Wearable.FEET){
+            else if (item.getWearable() == Wearable.FEET)
                 feetEquipment = item;
-            }
-            else if (item.getWearable() == Wearable.HANDS){
+            else if (item.getWearable() == Wearable.HANDS)
                 handsEquipment = item;
-            }
-            else if (item.getWearable() == Wearable.FIRSTHAND){
+            else if (item.getWearable() == Wearable.FIRSTHAND)
                 firstHandEquipment = item;
-            }
-            else if (item.getWearable() == Wearable.SECONDHAND){
+            else if (item.getWearable() == Wearable.SECONDHAND)
                 secondHandEquipment = item;
-            }
             else
                 throw new NotWearableItemException();
         }
     }
 
-    //private Item chooseByName(String name){
-    //
-    //}
-
-    public Item get(String name) throws NoSuchItemInEquipmentException {
-        if (headEquipment.getName().equalsIgnoreCase(name) && headEquipment.isEquipment()){
-            return headEquipment;
-        }
-        else if (torsoEquipment.getName().equalsIgnoreCase(name) && torsoEquipment.isEquipment()){
-            return torsoEquipment;
-        }
-        else if (legsEquipment.getName().equalsIgnoreCase(name) && legsEquipment.isEquipment()){
-            return legsEquipment;
-        }
-        else if (handsEquipment.getName().equalsIgnoreCase(name) && handsEquipment.isEquipment()){
-            return handsEquipment;
-        }
-        else if (feetEquipment.getName().equalsIgnoreCase(name) && feetEquipment.isEquipment()){
-            return feetEquipment;
-        }
-        else if (firstHandEquipment.getName().equalsIgnoreCase(name) && firstHandEquipment.isEquipment()){
-            return firstHandEquipment;
-        }
-        else if (secondHandEquipment.getName().equalsIgnoreCase(name) && secondHandEquipment.isEquipment()){
-            return secondHandEquipment;
-        }
+    public Optional<Item> get(String name) throws NoSuchItemInEquipmentException {
+        if (headEquipment.getName().equalsIgnoreCase(name) && headEquipment.isReal())
+            return Optional.ofNullable(headEquipment);
+        else if (torsoEquipment.getName().equalsIgnoreCase(name) && torsoEquipment.isReal())
+            return Optional.ofNullable(torsoEquipment);
+        else if (legsEquipment.getName().equalsIgnoreCase(name) && legsEquipment.isReal())
+            return Optional.ofNullable(legsEquipment);
+        else if (handsEquipment.getName().equalsIgnoreCase(name) && handsEquipment.isReal())
+            return Optional.ofNullable(handsEquipment);
+        else if (feetEquipment.getName().equalsIgnoreCase(name) && feetEquipment.isReal())
+            return Optional.ofNullable(feetEquipment);
+        else if (firstHandEquipment.getName().equalsIgnoreCase(name) && firstHandEquipment.isReal())
+            return Optional.ofNullable(firstHandEquipment);
+        else if (secondHandEquipment.getName().equalsIgnoreCase(name) && secondHandEquipment.isReal())
+            return Optional.ofNullable(secondHandEquipment);
         else
-            throw new NoSuchItemInEquipmentException();
+            return Optional.ofNullable(null);
     }
 
     public Item get(Wearable wearable){
-        if (wearable == Wearable.HEAD){
+        if (wearable == Wearable.HEAD)
             return headEquipment;
-        }
-        else if (wearable == Wearable.TORSO){
+        else if (wearable == Wearable.TORSO)
             return torsoEquipment;
-        }
-        else if (wearable == Wearable.LEGS){
+        else if (wearable == Wearable.LEGS)
             return legsEquipment;
-        }
-        else if (wearable == Wearable.HANDS){
+        else if (wearable == Wearable.HANDS)
             return handsEquipment;
-        }
-        else if (wearable == Wearable.FEET){
+        else if (wearable == Wearable.FEET)
             return feetEquipment;
-        }
-        else if (wearable == Wearable.FIRSTHAND){
+        else if (wearable == Wearable.FIRSTHAND)
             return firstHandEquipment;
-        }
-        else if (wearable == Wearable.SECONDHAND){
+        else if (wearable == Wearable.SECONDHAND)
             return secondHandEquipment;
-        }
-        else return null;
+        return null;
     }
 
-    public Item remove(String name) {
-        //Item = get(name)  can be used
-        Item item = null;
+    public boolean remove(String name) {
         if (headEquipment.getName().equalsIgnoreCase(name)){
-            item = headEquipment;
-                this.headEquipment = ManagerItem.get("NO_HELMET");
+                this.headEquipment = ManagerItem.get("NO_HELMET").get();
+                return true;
         }
         else if (torsoEquipment.getName().equalsIgnoreCase(name)){
-            item = torsoEquipment;
-                this.torsoEquipment = ManagerItem.get("NO_ARMOR");
+                this.torsoEquipment = ManagerItem.get("NO_ARMOR").get();
+                return true;
         }
         else if (legsEquipment.getName().equalsIgnoreCase(name)){
-            item = legsEquipment;
-                this.legsEquipment = ManagerItem.get("NO_TROUSERS");
+                this.legsEquipment = ManagerItem.get("NO_TROUSERS").get();
+                return true;
         }
         else if (handsEquipment.getName().equalsIgnoreCase(name)){
-            item = handsEquipment;
-                this.handsEquipment = ManagerItem.get("NO_GLOVES");
+                this.handsEquipment = ManagerItem.get("NO_GLOVES").get();
+                return true;
         }
         else if (feetEquipment.getName().equalsIgnoreCase(name)){
-            item = feetEquipment;
-                this.feetEquipment = ManagerItem.get("NO_BOOTS");
+                this.feetEquipment = ManagerItem.get("NO_BOOTS").get();
+                return true;
         }
         else if (firstHandEquipment.getName().equalsIgnoreCase(name)){
-            item = firstHandEquipment;
-                this.firstHandEquipment = ManagerItem.get("NO_WEAPON");
+                this.firstHandEquipment = ManagerItem.get("NO_WEAPON").get();
+                return true;
         }
         else if (secondHandEquipment.getName().equalsIgnoreCase(name)){
-            item = secondHandEquipment;
-                this.secondHandEquipment = ManagerItem.get("NO_SHIELD");
+                this.secondHandEquipment = ManagerItem.get("NO_SHIELD").get();
+                return true;
         }
-        if (!item.isEquipment())
-            return null;
-        return item;
+        return false;
     }
 
 

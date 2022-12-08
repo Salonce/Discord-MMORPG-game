@@ -63,6 +63,12 @@ class Weaknesses{
 
 //weaknesses...
 
+
+//instead of plain HP and attributes showing,
+//fight can look like: Saloncey dodged 15 times
+//Salonce attacked 19 times, for 150hp in total...
+//Salonce got hurt 13 times, for 167 in total...
+
 public class Fight {
     public Fight(Fighter fighterA, Fighter fighterB){
         this.fighterA = fighterA;

@@ -56,19 +56,19 @@ class Equipment{
 
     public Optional<Item> get(String name) throws NoSuchItemInEquipmentException {
         if (headEquipment.getName().equalsIgnoreCase(name) && headEquipment.isReal())
-            return Optional.ofNullable(headEquipment);
+            return Optional.of(headEquipment);
         else if (torsoEquipment.getName().equalsIgnoreCase(name) && torsoEquipment.isReal())
-            return Optional.ofNullable(torsoEquipment);
+            return Optional.of(torsoEquipment);
         else if (legsEquipment.getName().equalsIgnoreCase(name) && legsEquipment.isReal())
-            return Optional.ofNullable(legsEquipment);
+            return Optional.of(legsEquipment);
         else if (handsEquipment.getName().equalsIgnoreCase(name) && handsEquipment.isReal())
-            return Optional.ofNullable(handsEquipment);
+            return Optional.of(handsEquipment);
         else if (feetEquipment.getName().equalsIgnoreCase(name) && feetEquipment.isReal())
-            return Optional.ofNullable(feetEquipment);
+            return Optional.of(feetEquipment);
         else if (firstHandEquipment.getName().equalsIgnoreCase(name) && firstHandEquipment.isReal())
-            return Optional.ofNullable(firstHandEquipment);
+            return Optional.of(firstHandEquipment);
         else if (secondHandEquipment.getName().equalsIgnoreCase(name) && secondHandEquipment.isReal())
-            return Optional.ofNullable(secondHandEquipment);
+            return Optional.of(secondHandEquipment);
         else
             return Optional.ofNullable(null);
     }

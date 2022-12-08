@@ -330,8 +330,10 @@ class CallI extends MessageProcessor{
                     //        , ":coin: " + getCharacter().getInventory().getMoney()
                     //                + " :scales: " + getCharacter().getInventory().getItemsWeight(), false)
                     .thumbnail("https://openclipart.org/image/800px/330656");
+
+            embedBuilder.addField(emptySpaces(1), emptySpaces(1), false);
             for (Item item : getCharacter().getInventory().getItemList()){
-                embedBuilder.addField(addSpaces(item.getName(), INV_MAX_CHAR), getItemInfo(item), true);
+                embedBuilder.addField(addSpaces("__**" + item.getName() + "**__", INV_MAX_CHAR), getItemInfo(item), false);
             }
             sendMessage(embedBuilder.build());
         }
@@ -343,11 +345,11 @@ class CallI extends MessageProcessor{
         //stringBuilder.append("\n:scales: " + item.getWeight());
         //stringBuilder.append("\n\u2800");
         if (item.hasAttack())
-            stringBuilder.append("\n:dagger: " + item.getMinAttack() + "-" + item.getMaxAttack());
+            stringBuilder.append(", :dagger: " + item.getMinAttack() + "-" + item.getMaxAttack() + "  ");
         else
             empty++;
         if (item.hasDefense()){
-            stringBuilder.append("\n:shield: " + item.getDefence());
+            stringBuilder.append(", :shield: " + item.getDefence() + "  ");
         } else
             empty++;
         int a = 0;
@@ -360,22 +362,20 @@ class CallI extends MessageProcessor{
 }
 
 class CallEquipmentInfo extends MessageProcessor{
+    private final static int EMPTY_SPACE_COUNT = 13;
     public void process(){
         if (getContent().equals(".eq")){
             getCharacterManager().createCharAndPutInDb(getId());
             EmbedCreateSpec embed = EmbedCreateSpec.builder()
                 .color(Color.BLUE)
-                .addField(emptySpaces(15), emptySpaces(15), true)
-                .addField(emptySpaces(15), emptySpaces(15), true)
-                .addField(emptySpaces(15), emptySpaces(15), true)
-                .addField(addSpaces(":billed_cap:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHeadEquipment()), true)
-                .addField(addSpaces(":shirt:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getTorsoEquipment()), true)
-                .addField(addSpaces(":jeans:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getLegsEquipment()), true)
-                .addField(addSpaces(":boot:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getFeetEquipment()), true)
-                .addField(addSpaces(":gloves:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getHandsEquipment()), true)
-                .addField(addSpaces(":leftwards_hand:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getFirstHandEquipment()), true)
-                .addField(addSpaces(":rightwards_hand:", EQ_MAX_CHAR), getEmbedStats(getCharacter().getEquipment().getSecondHandEquipment()), true)
-                .addField(emptySpaces(15), emptySpaces(15), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":billed_cap:", getCharacter().getEquipment().getHeadEquipment()), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":shirt:", getCharacter().getEquipment().getTorsoEquipment()), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":jeans:", getCharacter().getEquipment().getLegsEquipment()), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":boot:", getCharacter().getEquipment().getFeetEquipment()), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":gloves:", getCharacter().getEquipment().getHandsEquipment()), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":leftwards_hand:",getCharacter().getEquipment().getFirstHandEquipment()), true)
+                .addField(addSpaces(emptySpaces(EMPTY_SPACE_COUNT), EQ_MAX_CHAR), getEmbedStats(":rightwards_hand:",getCharacter().getEquipment().getSecondHandEquipment()), true)
+                .addField(emptySpaces(EMPTY_SPACE_COUNT), emptySpaces(EMPTY_SPACE_COUNT), true)
                 //.addField("Total", ":shield: " + getCharacter().getEquipment().getTotalDefence()
                 //        + "\n:dagger: " + getCharacter().getEquipment().getTotalMinAttack() + "-" + getCharacter().getEquipment().getTotalMaxAttack()
                 //        + "\n:scales: " + getCharacter().getEquipment().getTotalWeight(), true)
@@ -385,22 +385,24 @@ class CallEquipmentInfo extends MessageProcessor{
         }
     }
     final static int EQ_MAX_CHAR = 13;
-    private String getEmbedStats(Item item){
+    private String getEmbedStats(String place, Item item){
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(place);
         if (!item.isEmptyEq) {
-            stringBuilder.append("**" + item.getName() + "**");
+            stringBuilder.append(" __**" + item.getName() + "**__");
             //stringBuilder.append("\n:coin: " + item.getValue());
-            stringBuilder.append("\n:scales: " + item.getWeight());
+            stringBuilder.append("\n:scales: " + item.getWeight() + "  ");
             if (item.hasAttack()) {
-                stringBuilder.append("\n:dagger: " + item.getMinAttack() + "-" + item.getMaxAttack());
+                stringBuilder.append(", :dagger: " + item.getMinAttack() + "-" + item.getMaxAttack() + "  ");
             }
             if (item.hasDefense()) {
-                stringBuilder.append("\n:shield: " + item.getDefence());
+                stringBuilder.append(", :shield: " + item.getDefence() + "  ");
             }
+
         }
         else
-            stringBuilder.append("-");
-        stringBuilder.append("\n" + emptySpaces(5));
+        //stringBuilder.append(" __**(empty)**__");
+        stringBuilder.append(" (empty)");
         return stringBuilder.toString();
     }
 }

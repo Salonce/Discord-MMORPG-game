@@ -43,11 +43,11 @@ enum Wearable{
     }
 }
 
-abstract class Item{
+class Item {
     private final int PRICE_MULTIPLICATOR = 2;
     //public static int MAX_ITEM_NAME_LENGTH = 15;
 
-    public Item(String name, int weight, int value){
+    public Item(String name, int weight, int value) {
         this.name = name;
         ManagerItem.putInHashMap(this);
 
@@ -58,7 +58,6 @@ abstract class Item{
         this.maxAttack = 0;
         this.hasDefense = false;
         this.hasAttack = false;
-        this.isEquipment = false;
         this.isEmptyEq = false;
         this.isMoney = false;
         this.wearable = Wearable.NOTHING;
@@ -72,195 +71,166 @@ abstract class Item{
     protected int maxAttack;
     protected boolean hasDefense;
     protected boolean hasAttack;
-    protected boolean isEquipment;
     protected boolean isEmptyEq;
     protected boolean isMoney;
     protected Wearable wearable;
     //private int price;
 
-    protected String getName(){return name;}
-    protected int getWeight(){return weight;}
-    protected int getValue(){return value;}
-    protected int getPrice(){ return getValue()*PRICE_MULTIPLICATOR; }
+    protected String getName() {
+        return name;
+    }
 
-    public int getDefence(){
+    protected int getWeight() {
+        return weight;
+    }
+
+    protected int getValue() {
+        return value;
+    }
+
+    protected int getPrice() {
+        return getValue() * PRICE_MULTIPLICATOR;
+    }
+
+    public int getDefence() {
         if (hasDefense())
             return defence;
         else return 0;
     }
-    public int getMinAttack(){
+
+    public int getMinAttack() {
         if (hasAttack())
             return minAttack;
         else return 0;
     }
-    public int getMaxAttack(){
+
+    public int getMaxAttack() {
         if (hasAttack())
             return maxAttack;
         else return 0;
     }
 
-    public boolean isReal(){
+    public boolean isReal() {
         return !this.isEmptyEq;
-    };
-    public boolean isEmptyEq(){
-        return this.isEmptyEq;
-    };
-    public boolean isEquipment(){
-        return this.isEquipment;
-    };
-    public boolean hasAttack(){
+    }
+
+    public boolean hasAttack() {
         return this.hasAttack;
     }
-    public boolean hasDefense(){
+
+    public boolean hasDefense() {
         return this.hasDefense;
     }
-    public Wearable getWearable(){
+
+    public Wearable getWearable() {
         return this.wearable;
     }
-    public boolean isMoney(){
+
+    public boolean isMoney() {
         return this.isMoney;
+    }
+
+
+    Item(Builder builder){
+        this.name = builder.name;
+        ManagerItem.putInHashMap(this);
+
+        this.weight = builder.weight;
+        this.value = builder.value;
+        this.defence = builder.defence;
+        this.minAttack = builder.minAttack;
+        this.maxAttack = builder.maxAttack;
+        this.hasDefense = builder.hasDefense;
+        this.hasAttack = builder.hasAttack;
+        this.isEmptyEq = builder.isEmptyEq;
+        this.isMoney = builder.isMoney;
+        this.wearable = builder.wearable;
+    }
+
+    public static class Builder{
+        public Builder(String name){
+            this.name = name;
+        }
+
+        private String name;
+        private int weight = 0;
+        private int value = 0;
+        private int defence = 0;
+        private int minAttack = 0;
+        private int maxAttack = 0;
+        private boolean hasDefense = false;
+        private boolean hasAttack = false;
+        private boolean isEmptyEq = false;
+        private boolean isMoney = false;
+        private Wearable wearable = Wearable.NOTHING;
+
+        public Builder weight(int weight) {
+            this.weight = weight;
+            return this;
+        }
+
+        public Builder value(int value) {
+            this.value = value;
+            return this;
+        }
+
+        public Builder defence(int defence) {
+            this.defence = defence;
+            this.hasDefense = true;
+            return this;
+        }
+
+        public Builder minAttack(int minAttack) {
+            this.minAttack = minAttack;
+            this.hasAttack = true;
+            return this;
+        }
+
+        public Builder maxAttack(int maxAttack) {
+            this.maxAttack = maxAttack;
+            this.hasAttack = true;
+            return this;
+        }
+
+        public Builder ghostEq(boolean emptyEq) {
+            isEmptyEq = emptyEq;
+            return this;
+        }
+
+        public Builder money(boolean money) {
+            isMoney = money;
+            return this;
+        }
+
+        public Builder wearable(Wearable wearable) {
+            this.wearable = wearable;
+            return this;
+        }
+
+        public Item build(){
+            return new Item(this);
+        }
     }
 }
 
-abstract class DefensiveItem extends Item{
-    public DefensiveItem(String name, int weight, int value, int defence){
+abstract class DefensiveItem extends Item {
+    public DefensiveItem(String name, int weight, int value, int defence) {
         super(name, weight, value);
         this.defence = defence;
         this.hasDefense = true;
-        this.isEquipment = true;
     }
 }
 
-abstract class HeadEquipment extends DefensiveItem{
-    public HeadEquipment(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-    }
-}
-
-abstract class TorsoEquipment extends DefensiveItem{
-    public TorsoEquipment(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-    }
-}
-
-abstract class LegsEquipment extends DefensiveItem{
-    public LegsEquipment(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-    }
-}
-
-abstract class BootsEquipment extends DefensiveItem{
-    public BootsEquipment(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-    }
-}
-
-abstract class HandsEquipment extends DefensiveItem{
-    public HandsEquipment(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-    }
-}
+//class ItemFactory{
+//    static Item getHelmet(String name, int weight, int value){
+//        return new Item() {
+//        };
+//    }
+//}
 
 abstract class SecondHandEquipment extends DefensiveItem{
     public SecondHandEquipment(String name, int weight, int value, int defence){
         super(name, weight, value, defence);
-    }
-}
-
-abstract class OffensiveItem extends Item{
-    public OffensiveItem(String name, int weight, int value, int minAttack, int maxAttack){
-        super(name, weight, value);
-        this.minAttack = minAttack;
-        this.maxAttack = maxAttack;
-        this.hasAttack = true;
-        this.isEquipment = true;
-    }
-}
-
-abstract class FirstHandEquipment extends OffensiveItem{
-    public FirstHandEquipment(String name, int weight, int value, int minAttack, int maxAttack){
-        super(name, weight, value, minAttack, maxAttack);
-    }
-}
-
-class NoHelmet extends HeadEquipment{
-    public NoHelmet(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.HEAD;
-    }
-}
-final class NoArmor extends TorsoEquipment{
-    public NoArmor(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.TORSO;
-    }
-}
-final class NoTrousers extends LegsEquipment{
-    public NoTrousers(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.LEGS;
-    };
-}
-final class NoGloves extends HandsEquipment{
-    public NoGloves(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.HANDS;
-    }
-
-}
-final class NoBoots extends BootsEquipment{
-    public NoBoots(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.FEET;
-    }
-}
-final class NoShield extends SecondHandEquipment{
-    public NoShield(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.SECONDHAND;
-    }
-}
-final class NoWeapon extends FirstHandEquipment{
-    public NoWeapon(String name, int weight, int value, int minAttack, int maxAttack){
-        super(name, weight, value, minAttack, maxAttack);
-        this.isEmptyEq = true;
-        this.wearable = Wearable.FIRSTHAND;
-    }
-}
-class Helmet extends HeadEquipment{
-    public Helmet(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.wearable = Wearable.HEAD;
-    }
-}
-final class Armor extends TorsoEquipment{
-    public Armor(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.wearable = Wearable.TORSO;
-    }
-}
-final class Trousers extends LegsEquipment{
-    public Trousers(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.wearable = Wearable.LEGS;
-    }
-}
-final class Gloves extends HandsEquipment{
-    public Gloves(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.wearable = Wearable.HANDS;
-    }
-}
-final class Boots extends BootsEquipment{
-    public Boots(String name, int weight, int value, int defence){
-        super(name, weight, value, defence);
-        this.wearable = Wearable.FEET;
     }
 }
 final class Shield extends SecondHandEquipment{
@@ -269,23 +239,10 @@ final class Shield extends SecondHandEquipment{
         this.wearable = Wearable.SECONDHAND;
     }
 }
-final class Weapon extends FirstHandEquipment{
-    public Weapon(String name, int weight, int value, int minAttack, int maxAttack){
-        super(name, weight, value, minAttack, maxAttack);
-        this.wearable = Wearable.FIRSTHAND;
-    }
-}
 
 final class CraftingItem extends Item{
     public CraftingItem(String name, int weight, int value){
         super(name, weight, value);
-    }
-}
-
-final class Money extends Item{
-    public Money(String name, int weight, int value){
-        super(name, weight, value);
-        this.isMoney = true;
     }
 }
 

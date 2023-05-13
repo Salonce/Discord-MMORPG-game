@@ -4,10 +4,9 @@ import discord4j.common.util.Snowflake;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 
-public class Model {
+public class Database {
     private static final String connectionUrl = "jdbc:mysql://localhost:3306/";
     private static String inApostrophes(String string){
         return ("'" + string + "'");

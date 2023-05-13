@@ -4,7 +4,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
-import java.time.Instant;
+
 import java.util.*;
 import discord4j.core.DiscordClient;
 import discord4j.core.object.entity.channel.MessageChannel;
@@ -141,8 +141,8 @@ class CallGive extends MessageProcessor{
                 Snowflake secondId = Snowflake.of(content[1]);
 
                 Relocator.give(getCharacter(), secondId, itemName);
-                Model.updateUserInventory(getId(), getCharacter());
-                Model.updateUserInventory(secondId, getCharacterManager().getCharacterById(secondId));
+                Database.updateUserInventory(getId(), getCharacter());
+                Database.updateUserInventory(secondId, getCharacterManager().getCharacterById(secondId));
                 sendMessage(getUserName() + " gives " + itemName + " to " + getUsernameBySnowflake(secondId));
             }
         } catch (NoSuchCharacterException ex) {
@@ -240,8 +240,8 @@ class CallEquip extends MessageProcessor{
                 getCharacterManager().createCharAndPutInDb(getId());
 
                 Relocator.equip(getCharacter(), content[1]);
-                Model.updateUserInventory(getId(), getCharacter());
-                Model.updateUserEquipment(getId(), getCharacter());
+                Database.updateUserInventory(getId(), getCharacter());
+                Database.updateUserEquipment(getId(), getCharacter());
                 sendMessage(getUserName() + " equipped " + content[1]);
             }
         } catch (NoSuchItemInInventoryException e) {
@@ -260,8 +260,8 @@ class CallUnequip extends MessageProcessor{
                 getCharacterManager().createCharAndPutInDb(getId());
 
                 Relocator.takeOff(getCharacter(), content[1]);
-                Model.updateUserInventory(getId(), getCharacter());
-                Model.updateUserEquipment(getId(), getCharacter());
+                Database.updateUserInventory(getId(), getCharacter());
+                Database.updateUserEquipment(getId(), getCharacter());
                 sendMessage(getUserName() + " unequipped " + content[1]);
             }
         }
@@ -280,7 +280,7 @@ class CallDrop extends MessageProcessor{
                 getCharacterManager().createCharAndPutInDb(getId());
 
                 Relocator.drop(getCharacter(), content[1]);
-                Model.updateUserInventory(getId(), getCharacter());
+                Database.updateUserInventory(getId(), getCharacter());
                 sendMessage(getUserName() + " dropped " + content[1]);
             }
         } catch (NoSuchItemInInventoryException e) {
@@ -298,7 +298,7 @@ class CallSell extends MessageProcessor{
                 getCharacterManager().createCharAndPutInDb(getId());
 
                 int cash = Relocator.sell(getCharacter(), content[1]);
-                Model.updateUserInventory(getId(), getCharacter());
+                Database.updateUserInventory(getId(), getCharacter());
                 sendMessage(getUserName() + " sold " + content[1] + " for " + cash);
             }
         } catch (NoSuchItemInInventoryException e) {
@@ -437,11 +437,11 @@ class CallRat extends MessageProcessor{
                             //+ "\n:hiking_boot: " + newMonster.getCombatStrength().getSpeed()
                             , true)
                     .addField(":clipboard:", printFightResult(fight, newMonster), false);
-                Model.updateUserHealth(getId(), getCharacter());
+                Database.updateUserHealth(getId(), getCharacter());
                 if (fight.getResults().getResultA().isVictory()) {
                     int lootNumber = getCharacter().getInventory().addItems(randomLoot);
                     embedBuilder.addField(":palm_down_hand:", printLoot(randomLoot, lootNumber), false);
-                    Model.updateUserInventory(getId(), getCharacter());
+                    Database.updateUserInventory(getId(), getCharacter());
                 }
 
                 sendMessage(embedBuilder.build());
@@ -519,7 +519,7 @@ class CallSortByName extends MessageProcessor{
         if (getContent().equals(".sortname")){
             getCharacterManager().createCharAndPutInDb(getId());
             getCharacter().getInventory().sortByName();
-            Model.updateUserInventory(getId(), getCharacter());
+            Database.updateUserInventory(getId(), getCharacter());
             sendMessage("Inventory sorted by name.");
         }
     }
@@ -530,7 +530,7 @@ class CallSortByValue extends MessageProcessor{
         if (getContent().equals(".sortval")){
             getCharacterManager().createCharAndPutInDb(getId());
             getCharacter().getInventory().sortByValueReversed();
-            Model.updateUserInventory(getId(), getCharacter());
+            Database.updateUserInventory(getId(), getCharacter());
             sendMessage("Inventory sorted by value.");
         }
     }
@@ -555,7 +555,7 @@ class CallSwap extends MessageProcessor{
                 int one = Integer.parseInt(content[1]);
                 int two = Integer.parseInt(content[2]);
                 getCharacter().getInventory().swap(one-1, two-1);
-                Model.updateUserInventory(getId(), getCharacter());
+                Database.updateUserInventory(getId(), getCharacter());
                 sendMessage("Inventory: *" + getCharacter().getInventory().getItemList().get(two-1).getName() + "* and *" + getCharacter().getInventory().getItemList().get(one-1).getName() + "* have been swapped.");
 
             }

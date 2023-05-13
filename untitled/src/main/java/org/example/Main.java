@@ -13,8 +13,8 @@ public class Main {
         //create a list of characters for users
         final AnswerManager answerManager = new AnswerManager();
         final CharacterManager characterManager = new CharacterManager("YES");
-            Model.addAllToUsersDb();
-            Model.loadAllIds(characterManager);
+            Database.addAllToUsersDb();
+            Database.loadAllIds(characterManager);
         final Shop basicShop = new BasicShop();
 
         MessageProcessor.setCharacterManager(characterManager);

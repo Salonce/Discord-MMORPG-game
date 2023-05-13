@@ -2,7 +2,6 @@ package org.example;
 
 import discord4j.common.util.Snowflake;
 
-import java.sql.*;
 import java.time.Instant;
 import java.util.HashMap;
 
@@ -171,7 +170,7 @@ class CharacterManager {
     public void createCharAndPutInDb(Snowflake id){
         if (!usersCharacters.containsKey(id)){
             createCharacter(id);
-            Model.addAllToUserDb(id);
+            Database.addAllToUserDb(id);
         }
     }
 

@@ -19,15 +19,15 @@ The game in current version includes:
 - Item management (sorting inventory, equipping and dropping items)
 - Automatic regeneration system of health and action points
 
+New items and monsters are easy to add in java classes by following the building pattern of existing ones.
+
 How to run:
 - Pass the token of your discord bot as the first CLI argument as you run the program.
 - Modify your local database username and password in the first lines of the Model java class.
 - If you want to use a database different than MySQL, switch the connector.
 
-
-All of these are stored in separated java files and new objects are easy to add by following the pattern in existing ones.
-
-![zzMQ2k8](https://github.com/Salonce/discord-rpg-game/assets/27849647/ef95fbf8-9d6a-4c9e-8449-75f5cece3960)
-![image](https://user-images.githubusercontent.com/27849647/226178152-44e4d730-730b-43df-b667-979747f6028c.png)
-![image](https://user-images.githubusercontent.com/27849647/226177879-a9417650-6f93-40b0-9e75-82f7d4115246.png)
+![zzMQ2k8](https://github.com/Salonce/discord-rpg-game/assets/27849647/ef95fbf8-9d6a-4c9e-8449-75f5cece3960) <br>
+![game1](https://github.com/Salonce/Discord-MMORPG-game/assets/27849647/2582bf26-87ac-444a-ade1-b44d3eeb22ab) <br>
+![game2](https://github.com/Salonce/Discord-MMORPG-game/assets/27849647/7d5288f4-72c5-4741-a4c7-7847328a39b9) <br>
+![image](https://user-images.githubusercontent.com/27849647/226177879-a9417650-6f93-40b0-9e75-82f7d4115246.png) <br>
 

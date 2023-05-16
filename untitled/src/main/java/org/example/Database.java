@@ -180,7 +180,7 @@ public class Database {
              PreparedStatement idExistsStatement = conn.prepareStatement(stringCheck);
              PreparedStatement insertValuesStatement = conn.prepareStatement(stringExecute);
              ResultSet resultSetId = idExistsStatement.executeQuery()){
-
+            /*
             if(resultSetId.next()){
                 System.out.println("user in IDs");
             }
@@ -188,6 +188,7 @@ public class Database {
                 insertValuesStatement.execute();
                 System.out.println("User not in IDs. Saving user.");
             }
+            */
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

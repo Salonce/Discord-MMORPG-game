@@ -8,6 +8,7 @@ import discord4j.rest.util.Color;
 import java.util.*;
 import discord4j.core.DiscordClient;
 import discord4j.core.object.entity.channel.MessageChannel;
+
 import java.util.NoSuchElementException;
 
 abstract class MessageProcessor{
@@ -37,8 +38,8 @@ abstract class MessageProcessor{
     protected static Snowflake getId(){return id;}
 
     //changed
-    private static Character character;
-    protected static Character getCharacter(){return characterManager.getCharacterById(id);}
+    private static org.example.Character character;
+    protected static org.example.Character getCharacter(){return characterManager.getCharacterById(id);}
 
     private static CharacterManager characterManager;
     protected static CharacterManager getCharacterManager(){return characterManager;}

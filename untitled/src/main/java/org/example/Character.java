@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.HashMap;
 
 
-class Character implements Fighter{
+public class Character implements Fighter{
     public Character(){
         this.inventory = new Inventory();
         this.actionPoints = new ActionPoints();
